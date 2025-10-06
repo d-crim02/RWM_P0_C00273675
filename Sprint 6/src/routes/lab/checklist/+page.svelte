@@ -1,5 +1,6 @@
 <script lang="ts">
     import ChecklistItem from '$lib/components/ChecklistItem.svelte';
+    import ChecklistProgress from "$lib/components/ChecklistProgress.svelte";
 
     let counterAmount = 0;
 
@@ -27,4 +28,6 @@
             <ChecklistItem id="checklistItem-{i}" label="Item {i}" on:change={updateCounter}></ChecklistItem>
         {/each}
     </div>
+
+    <ChecklistProgress></ChecklistProgress>
 </main>
