@@ -7,7 +7,7 @@
     function sendChange(e: Event)
     {
         const target = e.target as HTMLInputElement;
-        dispatch('change', { id, done: target.checked })
+        dispatch('change', { id, label, done: target.checked })
     }
 </script>
 <input type="checkbox" data-testid="{id}" bind:checked={done} on:change={sendChange}> <!-- ticks → dispatch('change') -->
