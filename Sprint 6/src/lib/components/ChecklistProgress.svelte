@@ -20,6 +20,9 @@
         ? Math.round(100 * items.filter(i => i.done).length / items.length)
         : 0);
 
+
+    export const previousPercentStore = writable<number>();
+
     function fillItemStore(count: number) {
         const items: ChecklistItemData[] = Array.from({ length: count }, (_, i) => ({
             id: i.toString(),
@@ -29,6 +32,7 @@
 
         itemsStore.set(items);
         temporaryStore.set(items);
+        previousPercentStore.set(0);
     }
 
     function updateProgress(e: CustomEvent<{ id: string; label: string; done: boolean }>) {
@@ -49,13 +53,18 @@
         });
         unsubscribe();
         itemsStore.set(tempItems);
+
+        percentDelta = $percentStore - $previousPercentStore;
+        previousPercentStore.set($percentStore);
     }
+
+    let percentDelta = $percentStore - $previousPercentStore;
 
     fillItemStore(checklistItems);
 
 </script>
 <div id="progress">
-    <label data-testid="progress">{$completedStore}/{$itemsLength} ({$percentStore}%)</label>
+    <p data-testid="progress" title="{percentDelta}% since last check-in">{$completedStore}/{$itemsLength} ({$percentStore}%)</p>
 </div>
 
 <div id="checklist">
