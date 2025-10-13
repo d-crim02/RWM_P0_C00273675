@@ -1,6 +1,7 @@
 <script lang="ts">
     import ChecklistItem from "$lib/components/ChecklistItem.svelte";
     import {derived, writable} from "svelte/store";
+    import Tooltip from "./tooltip.svelte";
 
     let checklistItems = 5;
     let submittedProgress = 0;
@@ -19,6 +20,7 @@
     export const percentStore = derived(itemsStore, items => items.length
         ? Math.round(100 * items.filter(i => i.done).length / items.length)
         : 0);
+    export const previousProgress = writable<number>(0);
 
 
     export const previousPercentStore = writable<number>();
@@ -57,21 +59,17 @@
         unsubscribe();
         itemsStore.set(tempItems);
 
-        percentDelta = $percentStore - $previousPercentStore;
-        previousPercentStore.set($percentStore);
-    }
-
-    let percentDelta = $percentStore - $previousPercentStore;
-    if (Number.isNaN(percentDelta))
-    {
-        percentDelta = 0;
+        let prev = localStorage.getItem('submittedProgress');
+        previousProgress.set(prev === null ? 0 : parseInt(prev));
+        localStorage.setItem('submittedProgress', $percentStore.toString());
     }
 
     fillItemStore(checklistItems);
 
 </script>
 <div id="progress">
-    <p data-testid="progress" title="{percentDelta}% since last check-in">{$completedStore}/{$itemsLength} ({$percentStore}%)</p>
+    <label data-testid="progress">{$completedStore}/{$itemsLength} ({$percentStore}%)</label>
+    <Tooltip lastChange={$previousProgress} />
 </div>
 
 <div id="checklist">
