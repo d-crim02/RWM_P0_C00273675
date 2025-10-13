@@ -32,7 +32,10 @@
 
         itemsStore.set(items);
         temporaryStore.set(items);
-        previousPercentStore.set(0);
+        if ($previousPercentStore === null || $previousPercentStore === undefined)
+        {
+            previousPercentStore.set(0);
+        }
     }
 
     function updateProgress(e: CustomEvent<{ id: string; label: string; done: boolean }>) {
@@ -59,6 +62,10 @@
     }
 
     let percentDelta = $percentStore - $previousPercentStore;
+    if (Number.isNaN(percentDelta))
+    {
+        percentDelta = 0;
+    }
 
     fillItemStore(checklistItems);
 
